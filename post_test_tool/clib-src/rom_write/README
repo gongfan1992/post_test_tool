@@ -1,0 +1,29 @@
+[PROGRAM]:               rom_write
+[VERSION]:               V1.10
+[AUTHOR]:                fival-li.ky
+[DATE]:                  2015年2月4日15:53:08
+[PLATFORM]:              MDE-4.2.2
+[REQUIREMENT]:           GX_ALL 需要BIB或者hv中打开相应设备
+[INTRODUCTION]:
+    写指定i2c设备的内容, 然后读取，查看是否相等,写入值为增序列。
+[PARAMETER]:
+    --passes             测试次数,默认值1。
+    --interval           两次测试之间的间隔，单位为秒,默认值1。
+    --i2c                指定i2c总线，可能值为0,1,2,默认值0.
+    --slave              相应i2c总线上的设备地址,为7位地址。 默认值0.
+    --word_offset        为1，代表16位地址宽度，
+                         为0，代表8位地址宽度。
+                         默认值0.
+    --offset             地址偏移,16进制，默认值0.
+    --bytes              一次写入字节数，默认值64.
+    --version            版本号
+[EXAMPLE]:
+    写i2c-0上0x50 rom 偏移0x100处，读出100个字节。
+    ./rom_write --i2c 0 --slave 0x50 --word_offset --offset 0x100 --bytes 100 --passes 10 --interval 1
+
+    
+
+------------------------------------------------------------
+[UPDATE]: V1.00 -> V1.10
+[REASON]: 增加--bytes参数，允许自由设置一次写入字节数。
+------------------------------------------------------------

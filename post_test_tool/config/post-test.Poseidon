@@ -1,0 +1,10 @@
+post_test_times              1
+[MEM-CPU]:            mem_cpu_do=do 
+[XGBE1-LOOP]:         xgbe1_loop_do=do    
+[XGBE2-LOOP]:         xgbe2_loop_do=do    
+[USB-DISK]:           usb_disk_do=do
+[GPIO-CPLD-SPI]:      gpio_cpld_spi_do=do
+[I2C]:                i2c_do=do
+[PCIe-CHECK]:         pcie_check_do=do
+[GPIO-LOOP]:          gpio_loop_do=do
+[UART_TILE]:          uart_tile_do=do 

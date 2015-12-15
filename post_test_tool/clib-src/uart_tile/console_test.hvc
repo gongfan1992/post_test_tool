@@ -1,0 +1,20 @@
+options stripe_memory=silent
+device? comp/0
+device? comp/1
+device? crypto/0
+device? crypto/1
+device? gpio/0
+device? i2cm/0
+device? i2cm/1
+device? i2cm/2
+device? mpipe/0
+device? mpipe/1
+device? srom/0
+device? trio/0
+device? trio/1
+device? uart/0
+device? uart/1
+device? usb_host/0
+device? usb_host/1
+client vmlinux
+  args TLR_INTERACTIVE=n 

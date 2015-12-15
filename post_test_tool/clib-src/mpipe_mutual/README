@@ -1,0 +1,66 @@
+
+
+[PROGRAM]:               mpipe_mutual
+[VERSION]:               V1.30
+[AUTHOR]:                fival-li.ky
+[DATE]:                  2015年2月4日16:35:11
+[PLATFORM]:              MDE-4.2.2
+[REQUIREMENT]:           GX_ALL 需要有mpipe设备
+[INTRODUCTION]:
+    读取指定i2c设备的内容, 多次读取时和第一次读取的进行比较，相同测通过。
+[PARAMETER]:
+    --second          测试时间长度，单位(s).
+    --sender          发包网口.
+    --recver          收包网口.
+    --config          配置文件，默认为generator.conf.
+    --errornum        设置错误统计次数，超过此次数后退出.
+    --timeout         设置等待一个包的时间，超时后不等待.
+    --queue_length    设置一次发包的数量.
+    --pktlen          设置发包长度
+    --workers         设置工作线程核数.
+    --len_check       无参数，校验包长度.
+    --data_check      无参数，校验包数据.
+    --help            帮助信息
+    --version         版本号
+[EXAMPLE]:
+    1.xgbe1发包，收包(示例)
+    ./mpipe_mutual --sender xgbe1 --recver xgbe1 --second 10 --workers 10
+    2.xgbe2发包，收包(示例)
+    ./mpipe_mutual --sender xgbe2 --recver xgbe2 --second 10 --workers 10
+
+    (输出界面解释)
+    输出                                解释
+    xgbe2: link up, 10 Gbps             //
+    xgbe1: link up, 10 Gbps             //xgbe1 xgbe2 link up 信息，串口中能看到
+    -----0 bit/ms 0.000000 Gbps        
+    -----0 bit/ms 0.000000 Gbps
+    -----0 bit/ms 0.000000 Gbps         //说明正在预启动
+    -----6025386 bit/ms 6.025386 Gbps
+    -----9545403 bit/ms 9.545404 Gbps
+    -----9554928 bit/ms 9.554929 Gbps
+    -----9554920 bit/ms 9.554920 Gbps
+    -----9554936 bit/ms 9.554937 Gbps
+    -----9554941 bit/ms 9.554941 Gbps
+    -----9545407 bit/ms 9.545408 Gbps
+    -----9554887 bit/ms 9.554888 Gbps   //发包速度信息
+    Error cause length miss match: 0 
+    Error cause data miss match:   0 
+    Error cause recv miss:       0
+    Correct len : 		17762086 
+    correct data: 		17762086
+    10 second Ok,Exit Now
+
+    
+
+------------------------------------------------------------
+[UPDATE]: V1.20 -> V1.30
+[REASON]: 修正软件在dataplane模式下出现stack dump的问题。
+------------------------------------------------------------
+------------------------------------------------------------
+[UPDATE]: V1.10 -> V1.20
+[REASON]: 实现指定配置文件功能。
+------------------------------------------------------------
+------------------------------------------------------------
+[UPDATE]: V1.00 -> V1.10
+[REASON]: 实现所有发包线程停止之后，进程再退出。
+------------------------------------------------------------

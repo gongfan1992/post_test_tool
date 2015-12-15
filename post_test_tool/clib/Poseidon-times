@@ -1,0 +1,10 @@
+mem_cpu   	             0  0
+xgbe1_loop                   0  0
+xgbe2_loop                   0  0
+usb_disk                     0  0
+gpio_cpld_spi                0  0
+i2c                          0  0
+pcie_check                   0  0
+gpio_loop                    0  0
+uart_tile		     0  0
+

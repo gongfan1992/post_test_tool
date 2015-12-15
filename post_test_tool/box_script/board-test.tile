@@ -1,0 +1,136 @@
+#! /bin/sh
+
+serial_num="PSD1031013c0034"
+box_type="Poseidon"
+start_time="None"
+start_time=`date +"%Y-%m-%d-%T"`
+config_file=./config/box-test.${box_type}
+
+total_times=1
+total_times=`cat $config_file | grep "post_test_times" | awk '{print $2}'`
+
+#Select the script of machine 
+
+cp ./clib/* /bin
+
+
+# Make sure that the log directory has been created.
+if [ ! -d ./log/$box_type-log ]
+then
+	mkdir ./log/$box_type-log
+fi 
+
+if [ ! -d ./log/$box_type-log/$serial_num ]
+then
+	mkdir ./log/$box_type-log/$serial_num
+fi
+
+##############################################
+# Start to test
+#
+##############################################
+gpio_led --passes -1 --mode 1 &
+led_pid=`ps -elf | grep "gpio_led" | grep "passes" | awk '{print $4}'`
+
+
+# We should config the Gigabits network ports down to test them through MPIPE.
+ports=`ifconfig -a | grep "xgbe[0-9]*" | awk '{print $1}'`
+for port in $ports
+do
+	ifconfig $port down >> /dev/null
+done
+
+log_dir='factory-log'
+if [ ! -d "./log/$log_dir" ]
+then
+	mkdir ./log/$log_dir
+fi
+
+if [ ! -d "./log/$log_dir/$box_type-log/" ]
+then
+	mkdir ./log/$log_dir/$box_type-log
+fi
+console_save="./log/$log_dir/$box_type-log/$serial_num-console.`date +'%Y%m%d-%H%M%S'`"
+
+#
+# Enumerate the test scripts in the resource directory of the platform
+# such as: Aries-resource(%-resource %BOARD). 
+# 
+# The testing script for each resource such MEMORY, MPIPE-XGBE1... will
+# be added as standard testing scripts to the directory: fival-resource.
+# You can copy some scripts to your  board's resource directory and start
+# the test.
+# 
+
+files=0
+
+count=0
+echo -n "" > $console_save
+for file in `ls ./box_script | grep sh`
+do 
+	files=`expr $files + 1`
+	pp=`echo $file | sed 's/\(.*\).sh/\1/g'`
+        do_or_not=`cat $config_file | grep $pp | awk -F '=' '{print $2}' | awk '{print $1}'`
+        if [ "$do_or_not" == "do" ]
+        then
+		count=`expr $count + 1`
+		echo "Start aging test for $box_type-$serial_num $start_time" >> ./log/$box_type-log/$serial_num/log-${pp}
+		./box_script/$file $box_type $serial_num ./log/$box_type-log/$serial_num/log-${pp} $total_times $led_pid $console_save &	
+	fi
+done
+
+
+last_line=0
+while [ 1 ]
+do
+	# Get the number of lines in the "LOG-console".
+	lines=`cat $console_save | awk '{print NR}'`
+	for line in $lines
+	do
+		if [ $line -gt $last_line ]
+		then
+			last_line=$line	
+		fi
+	done
+
+	#echo "$last_line"
+	sleep 1
+
+	# Print the aging environment version at the end.
+	if [ $last_line -eq $count ]
+	then
+		echo "" >> $console_save
+		echo "          Fival aging environment(V_0.9) T-start: `date +'%Y-%m-%d %T'` [00:00]" >> $console_save
+		break
+	fi
+done
+
+sleep 5
+
+error_count=0
+export TERM=vt100
+export TERMINFO=/usr/share/terminfo 
+while [ 1 ];
+do
+	post_error=`cat $console_save | grep error`
+	if [ "$post_error" != "" ] && [ $error_count == 0 ] 
+	then 
+		kill -9 $led_pid
+		gpio_led --passes -1 --mode 0 &
+		error_count=`expr $error_count + 1`
+	fi
+
+	sleep 10
+
+	clear
+	cat $console_save
+done
+ 
+
+
+
+ 
+
+
+
+
